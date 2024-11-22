@@ -2,6 +2,9 @@
 using Redarbor.Candidates.Api.Domain.Entities;
 using Redarbor.Candidates.Api.Infrastructure.DbContext;
 using Redarbor.Candidates.Api.Infrastructure.Repositories.Interfaces;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Redarbor.Candidates.Api.Infrastructure.Repositories.Impl
 {
@@ -14,15 +17,16 @@ namespace Redarbor.Candidates.Api.Infrastructure.Repositories.Impl
             _context = context;
         }
 
-        public async Task AddAsync(Candidate? candidate)
+        public async Task AddAsync(Candidate candidate)
         {
             await _context.Candidates.AddAsync(candidate);
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Candidate?> GetByIdAsync(int id)
+        public async Task<Candidate> GetByIdAsync(int id)
         {
-            return await _context.Candidates.Include(c => c.CandidateExperiences)
+            return await _context.Candidates
+                .Include(c => c.CandidateExperiences)
                 .FirstOrDefaultAsync(c => c.IdCandidate == id);
         }
 
@@ -33,15 +37,20 @@ namespace Redarbor.Candidates.Api.Infrastructure.Repositories.Impl
                 .ToListAsync();
         }
 
-        public async Task UpdateAsync(Candidate? candidate)
+        public async Task UpdateAsync(Candidate candidate)
         {
             _context.Candidates.Update(candidate);
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(Candidate? candidate)
+        public async Task DeleteAsync(Candidate candidate)
         {
             _context.Candidates.Remove(candidate);
+            await _context.SaveChangesAsync();
+        }
+        public async Task AddCandidateExperienceAsync(CandidateExperience experience)
+        {
+            await _context.Experiences.AddAsync(experience);
             await _context.SaveChangesAsync();
         }
     }

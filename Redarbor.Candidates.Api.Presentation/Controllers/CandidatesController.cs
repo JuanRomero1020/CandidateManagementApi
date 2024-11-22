@@ -37,7 +37,7 @@ namespace Redarbor.Candidates.Api.Presentation.Controllers
             return Ok(candidates);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public async Task<ActionResult<CandidateDto>> GetById(int id)
         {
             var candidate = await _candidateService.GetByIdAsync(id);
@@ -45,12 +45,12 @@ namespace Redarbor.Candidates.Api.Presentation.Controllers
             return Ok(candidate);
         }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult> Update(int id, [FromBody] CandidateDto candidateDto)
+        [HttpPut]
+        public async Task<ActionResult> Update([FromBody] CandidateDto candidateDto)
         {
             var updateCandidateCommand = _mapper.Map<UpdateCandidateCommand>(candidateDto);
             await _candidateService.UpdateAsync(updateCandidateCommand);
-            return NoContent();
+            return Ok();
         }
 
         [HttpDelete("{id}")]

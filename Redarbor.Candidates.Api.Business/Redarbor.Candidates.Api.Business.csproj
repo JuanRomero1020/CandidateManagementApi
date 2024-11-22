@@ -13,4 +13,8 @@
             Include="..\Redarbor.Candidates.Api.Infrastructure\Redarbor.Candidates.Api.Infrastructure.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="AutoMapper" Version="12.0.1" />
+    </ItemGroup>
+
 </Project>

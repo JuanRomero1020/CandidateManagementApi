@@ -6,6 +6,8 @@ using Redarbor.Candidates.Api.Business.Commands.Interfaces;
 using Redarbor.Candidates.Api.Business.Services.Impl;
 using Redarbor.Candidates.Api.Business.Services.Interfaces;
 using Redarbor.Candidates.Api.Domain.Commands.Create;
+using Redarbor.Candidates.Api.Domain.Commands.Update;
+using Redarbor.Candidates.Api.Domain.Commands.Delete;
 using Redarbor.Candidates.Api.Infrastructure.DbContext;
 using Redarbor.Candidates.Api.Infrastructure.Repositories.Impl;
 using Redarbor.Candidates.Api.Infrastructure.Repositories.Interfaces;
@@ -23,6 +25,7 @@ public static class IoCContainer
         RegisterCache(builder, configuration);
         RegisterRepositories(builder, configuration);
         RegisterServices(builder, configuration);
+        RegisterHandlers(builder, configuration);
         builder.Register((_) => new LogCreator(configuration)).SingleInstance();
         return builder;
     }
@@ -46,8 +49,20 @@ public static class IoCContainer
         builder.RegisterType<CandidateService>()
             .As<ICandidateService>()
             .InstancePerLifetimeScope();
+    }
+
+    private static void RegisterHandlers(ContainerBuilder builder, IConfiguration configuration)
+    {
         builder.RegisterType<CreateCandidateCommandHandler>()
             .As<ICommandHandler<CreateCandidateCommand>>()
+            .InstancePerLifetimeScope();
+
+        builder.RegisterType<UpdateCandidateCommandHandler>()
+            .As<ICommandHandler<UpdateCandidateCommand>>()
+            .InstancePerLifetimeScope();
+
+        builder.RegisterType<DeleteCandidateCommandHandler>()
+            .As<ICommandHandler<DeleteCandidateCommand>>()
             .InstancePerLifetimeScope();
     }
 

@@ -15,6 +15,14 @@ namespace Redarbor.Candidates.Api.Business.Commands.Handlers
 
         public async Task Handle(DeleteCandidateCommand command)
         {
+            var candidate = await _candidateRepository.GetByIdAsync(command.Id);
+
+            if (candidate == null)
+            {
+                throw new ArgumentException("Candidate not found");
+            }
+
+            await _candidateRepository.DeleteAsync(candidate);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Redarbor.Candidates.Api.Business.Commands.Interfaces;
+﻿using AutoMapper;
+using Redarbor.Candidates.Api.Business.Commands.Interfaces;
 using Redarbor.Candidates.Api.Business.Services.Interfaces;
 using Redarbor.Candidates.Api.Domain.Commands.Create;
 using Redarbor.Candidates.Api.Domain.Commands.Delete;
@@ -14,16 +15,18 @@ namespace Redarbor.Candidates.Api.Business.Services.Impl
         private readonly ICommandHandler<UpdateCandidateCommand> _updateCandidateCommandHandler;
         private readonly ICommandHandler<DeleteCandidateCommand> _deleteCandidateCommandHandler;
         private readonly ICandidateRepository _candidateRepository;
+        private readonly IMapper _mapper;
 
         public CandidateService(
             ICommandHandler<CreateCandidateCommand> createCandidateCommandHandler,
             ICommandHandler<UpdateCandidateCommand> updateCandidateCommandHandler,
             ICommandHandler<DeleteCandidateCommand> deleteCandidateCommandHandler,
-            ICandidateRepository candidateRepository)
+            IMapper mapper, ICandidateRepository candidateRepository)
         {
             _createCandidateCommandHandler = createCandidateCommandHandler;
             _updateCandidateCommandHandler = updateCandidateCommandHandler;
             _deleteCandidateCommandHandler = deleteCandidateCommandHandler;
+            _mapper = mapper;
             _candidateRepository = candidateRepository;
         }
 
@@ -32,30 +35,27 @@ namespace Redarbor.Candidates.Api.Business.Services.Impl
             await _createCandidateCommandHandler.Handle(command);
         }
 
+        public async Task<IEnumerable<CandidateDto>> GetAllAsync()
+        {
+            var candidates = await _candidateRepository.GetAllAsync();
+            return _mapper.Map<IEnumerable<CandidateDto>>(candidates);
+        }
+
+        public async Task<CandidateDto> GetByIdAsync(int id)
+        {
+            var candidate = await _candidateRepository.GetByIdAsync(id);
+            return _mapper.Map<CandidateDto>(candidate);
+        }
+
         public async Task UpdateAsync(UpdateCandidateCommand command)
         {
-            var candidate = await GetByIdAsync(command.Id);
-            if (candidate == null) throw new ArgumentException("Candidate not found");
             await _updateCandidateCommandHandler.Handle(command);
         }
 
         public async Task DeleteAsync(int id)
         {
-            var candidate = await GetByIdAsync(id);
-            if (candidate == null) throw new ArgumentException("Candidate not found");
-
             var command = new DeleteCandidateCommand { Id = id };
             await _deleteCandidateCommandHandler.Handle(command);
-        }
-
-        public async Task<IEnumerable<CandidateDto>> GetAllAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<CandidateDto> GetByIdAsync(int id)
-        {
-            throw new NotImplementedException();
         }
     }
 }

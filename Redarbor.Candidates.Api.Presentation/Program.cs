@@ -74,7 +74,7 @@ public static class Program
     private static void ConfigureServices(IServiceCollection services, IWebHostEnvironment webHostEnvironment)
     {
         ConfigureValidators(services);
-        services.AddAutoMapper(typeof(MappingProfileCandidateMappe));
+        services.AddAutoMapper(typeof(MappingProfileCandidateMapper));
         services.AddHttpContextAccessor();
         services.AddControllers().AddJsonOptions(options =>
             {

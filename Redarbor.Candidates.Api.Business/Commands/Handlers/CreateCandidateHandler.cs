@@ -20,6 +20,7 @@ namespace Redarbor.Candidates.Api.Business.Commands.Handlers
             {
                 throw new ArgumentException("El nombre y el apellido son requeridos.");
             }
+            // TODO: Validate if the candidate exists
 
             var candidate = new Candidate
             {
