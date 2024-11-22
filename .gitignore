@@ -1,0 +1,75 @@
+# .NET Core / .NET 8.0
+bin/
+obj/
+
+# Rider
+.idea/
+
+# Visual Studio
+.vs/
+.vs2019/
+.vs2017/
+.vscode/
+
+# User-specific files
+*.user
+*.userosscache
+*.suo
+*.userprefs
+.idea/
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Dd]ist/
+[Dd]eploy/
+[Dd]esktop/
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Windows Installer packaging
+*.exe
+*.dll
+*.pdb
+*.config
+*.xml
+
+# JetBrains Rider config folder
+.idea/
+
+# .NET Core specific files
+project.lock.json
+project.fragment.lock.json
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# NUGET
+*.nupkg
+# Uncomment if you have tasks that create project's package on build
+# *.snupkg
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Windows installer packaging
+*.exe
+*.dll
+*.pdb
+*.config
+
+# Azure Functions
+local.settings.json
+
+# macOS
+.DS_Store
+
+# Linux
+*~ 
