@@ -4,11 +4,13 @@ using Redarbor.Candidates.Api.Business.Services.Interfaces;
 using Redarbor.Candidates.Api.Domain.Commands.Create;
 using Redarbor.Candidates.Api.Domain.Commands.Update;
 using Redarbor.Candidates.Api.Domain.Dtos;
+using Redarbor.Candidates.Api.Presentation.Filters;
 
 namespace Redarbor.Candidates.Api.Presentation.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [TypeFilter(typeof(CandidateExceptionFilter))]
     public class CandidatesController : ControllerBase
     {
         private readonly ICandidateService _candidateService;

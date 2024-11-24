@@ -1,5 +1,6 @@
 ﻿using Redarbor.Candidates.Api.Business.Commands.Interfaces;
 using Redarbor.Candidates.Api.Domain.Commands.Delete;
+using Redarbor.Candidates.Api.Domain.Exceptions;
 using Redarbor.Candidates.Api.Infrastructure.Repositories.Interfaces;
 
 namespace Redarbor.Candidates.Api.Business.Commands.Handlers
@@ -19,7 +20,7 @@ namespace Redarbor.Candidates.Api.Business.Commands.Handlers
 
             if (candidate == null)
             {
-                throw new ArgumentException("Candidate not found");
+                throw new NotFoundCandidateException("Candidate not found");
             }
 
             await _candidateRepository.DeleteAsync(candidate);

@@ -2,9 +2,9 @@
 
 public class CandidateExperience
 {
-    public int IdCandidateExperience { get; set; } // PK
+    public int IdCandidateExperience { get; set; }
 
-    public int IdCandidate { get; set; } // FK
+    public int IdCandidate { get; set; }
 
     public string Company { get; set; }
     public string Job { get; set; }
@@ -12,11 +12,10 @@ public class CandidateExperience
     public decimal Salary { get; set; }
 
     public DateTime BeginDate { get; set; }
-    public DateTime? EndDate { get; set; } // Puede ser nulo
+    public DateTime? EndDate { get; set; }
 
     public DateTime InsertDate { get; set; }
-    public DateTime? ModifyDate { get; set; } // Puede ser nulo
+    public DateTime? ModifyDate { get; set; }
 
-    // Relación inversa con Candidate
     public Candidate Candidate { get; set; }
 }

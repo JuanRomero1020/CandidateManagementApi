@@ -2,16 +2,15 @@
 
 public class Candidate
 {
-    public int IdCandidate { get; set; } // PK
+    public int IdCandidate { get; set; } 
 
     public string Name { get; set; }
     public string Surname { get; set; }
     public DateTime? Birthdate { get; set; }
-    public string Email { get; set; } // AK (Unique)
+    public string Email { get; set; } 
 
     public DateTime InsertDate { get; set; }
-    public DateTime? ModifyDate { get; set; } // Puede ser nulo
+    public DateTime? ModifyDate { get; set; } 
 
-    // Relación con CandidateExperience (Uno a muchos)
     public ICollection<CandidateExperience>? CandidateExperiences { get; set; } = new List<CandidateExperience>();
 }

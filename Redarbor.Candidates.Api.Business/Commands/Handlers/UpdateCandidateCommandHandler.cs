@@ -5,6 +5,7 @@ using Redarbor.Candidates.Api.Domain.Commands.Update;
 using Redarbor.Candidates.Api.Domain.Dtos;
 using Redarbor.Candidates.Api.Infrastructure.Repositories.Interfaces;
 using Redarbor.Candidates.Api.Domain.Entities;
+using Redarbor.Candidates.Api.Domain.Exceptions;
 
 namespace Redarbor.Candidates.Api.Business.Commands.Handlers
 {
@@ -23,7 +24,7 @@ namespace Redarbor.Candidates.Api.Business.Commands.Handlers
 
             if (candidate == null)
             {
-                throw new ArgumentException("Candidate not found");
+                throw new NotFoundCandidateException("Candidate not found");
             }
 
             candidate.Name = command.Name;

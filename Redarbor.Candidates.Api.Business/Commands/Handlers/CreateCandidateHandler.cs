@@ -16,11 +16,7 @@ namespace Redarbor.Candidates.Api.Business.Commands.Handlers
 
         public async Task Handle(CreateCandidateCommand command)
         {
-            if (string.IsNullOrEmpty(command.Name) || string.IsNullOrEmpty(command.Surname))
-            {
-                throw new ArgumentException("El nombre y el apellido son requeridos.");
-            }
-            // TODO: Validate if the candidate exists
+           // TODO: Validate if the candidate exists
 
             var candidate = new Candidate
             {
