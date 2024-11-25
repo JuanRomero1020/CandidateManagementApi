@@ -1,11 +1,14 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Caching.Memory;
 using Redarbor.Candidates.Api.Business.Commands.Interfaces;
 using Redarbor.Candidates.Api.Business.Services.Interfaces;
 using Redarbor.Candidates.Api.Domain.Commands.Create;
 using Redarbor.Candidates.Api.Domain.Commands.Delete;
 using Redarbor.Candidates.Api.Domain.Commands.Update;
 using Redarbor.Candidates.Api.Domain.Dtos;
+using Redarbor.Candidates.Api.Domain.Utils;
 using Redarbor.Candidates.Api.Infrastructure.Repositories.Interfaces;
+using Serilog;
 
 namespace Redarbor.Candidates.Api.Business.Services.Impl
 {
@@ -16,6 +19,7 @@ namespace Redarbor.Candidates.Api.Business.Services.Impl
         private readonly ICommandHandler<DeleteCandidateCommand> _deleteCandidateCommandHandler;
         private readonly ICandidateRepository _candidateRepository;
         private readonly IMapper _mapper;
+        private readonly IMemoryCache _memoryCache;
 
         public CandidateService(
             ICommandHandler<CreateCandidateCommand> createCandidateCommandHandler,
@@ -28,6 +32,7 @@ namespace Redarbor.Candidates.Api.Business.Services.Impl
             _deleteCandidateCommandHandler = deleteCandidateCommandHandler;
             _mapper = mapper;
             _candidateRepository = candidateRepository;
+            _memoryCache = new MemoryCache(new MemoryCacheOptions());
         }
 
         public async Task CreateCandidateAsync(CreateCandidateCommand command)
@@ -41,10 +46,21 @@ namespace Redarbor.Candidates.Api.Business.Services.Impl
             return _mapper.Map<IEnumerable<CandidateDto>>(candidates);
         }
 
-        public async Task<CandidateDto> GetByIdAsync(int id)
+        public async Task<CandidateDto?> GetByIdAsync(int id)
         {
-            var candidate = await _candidateRepository.GetByIdAsync(id);
-            return _mapper.Map<CandidateDto>(candidate);
+            var isExistsInCache =
+                _memoryCache.TryGetValue(id,
+                    out CandidateDto? candidateById);
+            var cacheAliveTime = TimeSpan.FromSeconds(CandidateUtils.TimeToRefreshCacheInSeconds);
+            if (isExistsInCache) return candidateById;
+            candidateById = _mapper.Map<CandidateDto>(await _candidateRepository.GetByIdAsync(id));
+            var cacheEntryPointsChannelRuleByMessage =
+                new MemoryCacheEntryOptions().SetAbsoluteExpiration(cacheAliveTime);
+            _memoryCache.Set(id, candidateById,
+                cacheEntryPointsChannelRuleByMessage);
+            Log.Warning("Refreshed Cache to candidate {id}", id);
+
+            return candidateById;
         }
 
         public async Task UpdateAsync(UpdateCandidateCommand command)

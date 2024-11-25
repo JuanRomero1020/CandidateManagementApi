@@ -12,6 +12,7 @@ using Redarbor.Candidates.Api.Infrastructure.DbContext;
 using Redarbor.Candidates.Api.Infrastructure.Repositories.Impl;
 using Redarbor.Candidates.Api.Infrastructure.Repositories.Interfaces;
 using Redarbor.Candidates.Api.Presentation.Serilog;
+using Serilog;
 
 namespace Redarbor.Candidates.Api.Presentation.IoCContainer;
 
@@ -20,9 +21,8 @@ public static class IoCContainer
 {
     public static ContainerBuilder BuildContext(this ContainerBuilder builder, IConfiguration configuration)
     {
-        var executionEnvironment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+        Log.Debug("Building Autofac dependencies");
         RegisterClients(builder, configuration);
-        RegisterCache(builder, configuration);
         RegisterRepositories(builder, configuration);
         RegisterServices(builder, configuration);
         RegisterHandlers(builder, configuration);
@@ -30,12 +30,10 @@ public static class IoCContainer
         return builder;
     }
 
-    private static void RegisterCache(ContainerBuilder builder, IConfiguration configuration)
-    {
-    }
 
     private static void RegisterClients(ContainerBuilder builder, IConfiguration configuration)
     {
+        Log.Debug("Building Autofac clients dependencies");
         var connectionString = configuration.GetConnectionString("DefaultConnection");
         builder.Register(c => new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseSqlServer(connectionString)
@@ -46,6 +44,7 @@ public static class IoCContainer
 
     private static void RegisterServices(ContainerBuilder builder, IConfiguration configuration)
     {
+        Log.Debug("Building Autofac Services dependencies");
         builder.RegisterType<CandidateService>()
             .As<ICandidateService>()
             .InstancePerLifetimeScope();
@@ -53,6 +52,7 @@ public static class IoCContainer
 
     private static void RegisterHandlers(ContainerBuilder builder, IConfiguration configuration)
     {
+        Log.Debug("Building Autofac handlers from Services dependencies");
         builder.RegisterType<CreateCandidateCommandHandler>()
             .As<ICommandHandler<CreateCandidateCommand>>()
             .InstancePerLifetimeScope();
@@ -68,6 +68,7 @@ public static class IoCContainer
 
     private static void RegisterRepositories(ContainerBuilder builder, IConfiguration configuration)
     {
+        Log.Debug("Building Autofac Repository dependencies");
         builder.RegisterType<CandidateRepository>()
             .As<ICandidateRepository>()
             .InstancePerLifetimeScope();

@@ -7,7 +7,7 @@ namespace Redarbor.Candidates.Api.Business.Services.Interfaces
     public interface ICandidateService
     {
         Task<IEnumerable<CandidateDto>> GetAllAsync();
-        Task<CandidateDto> GetByIdAsync(int id);
+        Task<CandidateDto?> GetByIdAsync(int id);
         Task CreateCandidateAsync(CreateCandidateCommand command);
         Task UpdateAsync(UpdateCandidateCommand candidateDto);
         Task DeleteAsync(int id);

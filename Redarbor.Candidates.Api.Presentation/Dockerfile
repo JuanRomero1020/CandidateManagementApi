@@ -1,22 +1,31 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
-WORKDIR /app
-EXPOSE 80
-EXPOSE 443
+﻿#The individual restore layers optimize the cointainer build and upload
+#If no dependencies are changed in the layer the layer isn't re-builded and docker uses the cached layer 
+FROM build AS domain-restore
+COPY ["Redarbor.Candidates.Api.Domain/Redarbor.Candidates.Api.Domain.csproj", "Redarbor.Candidates.Api.Domain/Redarbor.Candidates.Api.Domain.csproj"]
+RUN dotnet restore "Redarbor.Candidates.Api.Domain/Redarbor.Candidates.Api.Domain.csproj"
 
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
-ARG BUILD_CONFIGURATION=Release
-WORKDIR /src
-COPY ["Redarbor.Candidates.Api.Presentation/Redarbor.Candidates.Api.Presentation.csproj", "Redarbor.Candidates.Api.Presentation/"]
+FROM domain-restore AS business-restore
+COPY ["Redarbor.Candidates.Api.Business/Redarbor.Candidates.Api.Business.csproj", "Redarbor.Candidates.Api.Business/Redarbor.Candidates.Api.Business.csproj"]
+RUN dotnet restore "Redarbor.Candidates.Api.Business/Redarbor.Candidates.Api.Business.csproj"
+
+FROM business-restore AS infrastructure-restore
+COPY ["Redarbor.Candidates.Api.Insrastructure/Redarbor.Candidates.Api.Infrastructure.csproj", "Redarbor.Candidates.Api.Insrastructure/Redarbor.Candidates.Api.Infrastructure.csproj"]
+RUN dotnet restore "Redarbor.Candidates.Api.Insrastructure/Redarbor.Candidates.Api.Infrastructure.csproj"
+
+FROM infrastructure-restore AS api-restore
+COPY ["Redarbor.Candidates.Api.Presentation/Redarbor.Candidates.Api.Presentation.csproj", "Redarbor.Candidates.Api.Presentation/Redarbor.Candidates.Api.Presentation.csproj"]
 RUN dotnet restore "Redarbor.Candidates.Api.Presentation/Redarbor.Candidates.Api.Presentation.csproj"
-COPY . .
-WORKDIR "/src/Redarbor.Candidates.Api.Presentation"
-RUN dotnet build "Redarbor.Candidates.Api.Presentation.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "Redarbor.Candidates.Api.Presentation.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+FROM api-restore AS publish
+COPY ["Redarbor.Candidates.Api.Presentation/", "Redarbor.Candidates.Api.Presentation/"]
+COPY ["Redarbor.Candidates.Api.Business/", "Redarbor.Candidates.Api.Business/"]
+COPY ["Redarbor.Candidates.Api.Domain/", "Redarbor.Candidates.Api.Domain/"]
+COPY ["Redarbor.Candidates.Api.Insrastructure/", "Redarbor.Candidates.Api.Insrastructure/"]
+WORKDIR ./Redarbor.Candidates.Api.Presentation/
+RUN dotnet publish "Redarbor.Candidates.Api.Presentation.csproj" -c Release -o /app/publish --no-restore 
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+ENV ASPNETCORE_URLS=http://+:8080
 ENTRYPOINT ["dotnet", "Redarbor.Candidates.Api.Presentation.dll"]
