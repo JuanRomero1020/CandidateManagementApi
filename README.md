@@ -255,13 +255,13 @@ We welcome contributions to the Candidate Management API! To ensure smooth colla
 
 ## License
 
-The Candidate Management API is licensed under the **MIT License**.
+The Candidate Management API is licensed under the **Apache License**.
 
 ### MIT License Summary
 
 - **Permission**: You can use, modify, and distribute the software for personal, educational, or commercial purposes.
 - **Limitation**: The software is provided "as is" without any warranties or guarantees.
 
-For more details, check the full license text:
+For more details, check the full license text: https://github.com/JuanRomero1020/CandidateManagementApi/tree/main?tab=Apache-2.0-1-ov-file 
 
 
