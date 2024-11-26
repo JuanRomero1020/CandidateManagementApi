@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using System;
+using FluentValidation;
 using Redarbor.Candidates.Api.Domain.Dtos;
 
 namespace Redarbor.Candidates.Api.Presentation.Validators
