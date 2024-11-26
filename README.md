@@ -154,7 +154,108 @@ CREATE TABLE dbo.candidateexperiences (
     ModifyDate DATETIME NULL
 );
 ```
+### if you have python you can run the following script it will create the tables and do a small populated one
+```code
+import pyodbc
+from datetime import datetime
+import random
+from faker import Faker
 
+connection_string = (
+    'DRIVER={ODBC Driver 17 for SQL Server};'
+    'SERVER=localhost,1433;' 
+    'DATABASE=master;'  
+    'UID=sa;' 
+    'PWD=Password123'  
+)
+
+
+connection = pyodbc.connect(connection_string)
+cursor = connection.cursor()
+
+
+def create_tables():
+    cursor.execute("""
+        IF OBJECT_ID('dbo.candidates', 'U') IS NOT NULL
+            DROP TABLE dbo.candidates;
+            
+        CREATE TABLE dbo.candidates (
+            IdCandidate INT IDENTITY(1,1) PRIMARY KEY,
+            Name VARCHAR(50),
+            Surname VARCHAR(150),
+            Birthdate DATETIME,
+            Email VARCHAR(250) UNIQUE,
+            InsertDate DATETIME,
+            ModifyDate DATETIME NULL
+        );
+        
+        IF OBJECT_ID('dbo.candidateexperiences', 'U') IS NOT NULL
+            DROP TABLE dbo.candidateexperiences;
+        
+        CREATE TABLE dbo.candidateexperiences (
+            IdCandidateExperience INT IDENTITY(1,1) PRIMARY KEY,
+            IdCandidate INT FOREIGN KEY REFERENCES dbo.candidates(IdCandidate),
+            Company VARCHAR(100),
+            Job VARCHAR(100),
+            Description VARCHAR(4000),
+            Salary NUMERIC(8,2),
+            BeginDate DATETIME,
+            EndDate DATETIME NULL,
+            InsertDate DATETIME,
+            ModifyDate DATETIME NULL
+        );
+    """)
+    connection.commit()
+
+
+def insert_sample_data():
+    fake = Faker()
+    
+    
+    for _ in range(10):
+        name = fake.first_name()
+        surname = fake.last_name()
+        birthdate = fake.date_of_birth(minimum_age=18, maximum_age=60)
+        email = fake.email()
+        insert_date = datetime.now()
+        modify_date = None 
+        
+        cursor.execute("""
+            INSERT INTO dbo.candidates (Name, Surname, Birthdate, Email, InsertDate, ModifyDate)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (name, surname, birthdate, email, insert_date, modify_date))
+    
+    connection.commit()
+    
+    
+    for candidate_id in range(1, 11):
+        for _ in range(random.randint(1, 3)): 
+            company = fake.company()
+            job = fake.job()
+            description = fake.text(max_nb_chars=4000)
+            salary = random.uniform(30000, 80000)  
+            begin_date = fake.date_this_century()
+            end_date = fake.date_this_century() if random.choice([True, False]) else None  
+            insert_date = datetime.now()
+            modify_date = None  
+            
+            cursor.execute("""
+                INSERT INTO dbo.candidateexperiences 
+                (IdCandidate, Company, Job, Description, Salary, BeginDate, EndDate, InsertDate, ModifyDate)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (candidate_id, company, job, description, salary, begin_date, end_date, insert_date, modify_date))
+        
+    connection.commit()
+
+
+create_tables()
+insert_sample_data()
+
+cursor.close()
+connection.close()
+
+print("Tablas creadas y datos insertados correctamente.")
+```
 ## Usage
 
 Once the application is running, you can interact with the Candidate Management API via the following routes:
