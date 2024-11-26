@@ -1,5 +1,3 @@
-# CandidateManagementApi
-
 # Candidate Management API
 
 Welcome to the **Candidate Management API**! This project allows you to manage candidates and their experiences efficiently, with a well-structured REST API built using **ASP.NET Core** and **Entity Framework**. The API includes functionality for adding, updating, and deleting candidate data, with proper validation for the fields.
