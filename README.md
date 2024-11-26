@@ -23,7 +23,6 @@ Welcome to the **Candidate Management API**! This project allows you to manage c
 - [Usage](#usage)
 - [API Endpoints](#endpoints)
 - [Validations](#validations)
-- [Testing](#testing)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -67,10 +66,11 @@ dotnet run
 9. **To use Docker for SQL Server, you can follow the instructions in the Docker Compose Setup**:
   - 9.1 Ensure Docker is installed on your machine. If not, follow Docker's installation guide.
   - 9.2 Navigate to your project directory and run:
-
 ```bash
 docker-compose up
-
+```
+You need to be in the folder that contains the file.
+```code
 version: '3.8'
 
 services:
@@ -96,6 +96,65 @@ volumes:
   candidates-db-data:
     driver: local
 
+```
+
+## Database Setup
+
+This section will guide you through setting up the database using **Entity Framework** Core.
+
+### Steps to Create the Database with Entity Framework
+
+1. **Install Entity Framework Core:**
+
+   First, make sure you have the necessary NuGet packages installed in your project.
+
+   You can install these packages using the following commands:
+
+   ```bash
+   dotnet add package Microsoft.EntityFrameworkCore
+   dotnet add package Microsoft.EntityFrameworkCore.SqlServer
+   dotnet add package Microsoft.EntityFrameworkCore.Tools
+
+   go to the folder “Redarbor.Candidates.Api.Redarbor.Candidates.Api.Infrastructure.DBContex”, open the terminal and you can execute: \
+   ```bash
+   dotnet ef migrations add InitialCreate
+   dotnet ef database update
+2. **SQL Commands**:
+    you can use the option with the following sql commands to create the tables 
+    
+You can create the necessary database tables using the following SQL script:
+
+```sql
+-- Create 'candidates' table
+IF OBJECT_ID('dbo.candidates', 'U') IS NOT NULL
+    DROP TABLE dbo.candidates;
+
+CREATE TABLE dbo.candidates (
+    IdCandidate INT IDENTITY(1,1) PRIMARY KEY,
+    Name VARCHAR(50),
+    Surname VARCHAR(150),
+    Birthdate DATETIME,
+    Email VARCHAR(250) UNIQUE,
+    InsertDate DATETIME,
+    ModifyDate DATETIME NULL
+);
+
+-- Create 'candidateexperiences' table
+IF OBJECT_ID('dbo.candidateexperiences', 'U') IS NOT NULL
+    DROP TABLE dbo.candidateexperiences;
+
+CREATE TABLE dbo.candidateexperiences (
+    IdCandidateExperience INT IDENTITY(1,1) PRIMARY KEY,
+    IdCandidate INT FOREIGN KEY REFERENCES dbo.candidates(IdCandidate),
+    Company VARCHAR(100),
+    Job VARCHAR(100),
+    Description VARCHAR(4000),
+    Salary NUMERIC(8,2),
+    BeginDate DATETIME,
+    EndDate DATETIME NULL,
+    InsertDate DATETIME,
+    ModifyDate DATETIME NULL
+);
 ```
 
 ## Usage
@@ -176,5 +235,35 @@ Here are the available endpoints for interacting with the Candidates API:
 | `POST`      | `/candidates/experience`  | Add or update candidate experience data.    |
 
 For detailed request and response formats, see [Validations](Validations.md).
+
+
+## Contributing
+
+We welcome contributions to the Candidate Management API! To ensure smooth collaboration, please follow the guidelines below:
+
+### Steps to Contribute
+
+1. **Fork the repository**:
+   - Click the **Fork** button at the top-right of the repository to create a personal copy of the project.
+
+2. **Clone your forked repository**:
+   ```bash
+   git clone https://github.com/your-username/candidate-management-api.git
+   cd candidate-management-api
+3.  **Create a new branch:**:
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+
+## License
+
+The Candidate Management API is licensed under the **MIT License**.
+
+### MIT License Summary
+
+- **Permission**: You can use, modify, and distribute the software for personal, educational, or commercial purposes.
+- **Limitation**: The software is provided "as is" without any warranties or guarantees.
+
+For more details, check the full license text:
 
 
