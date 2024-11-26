@@ -256,6 +256,7 @@ connection.close()
 
 print("Tablas creadas y datos insertados correctamente.")
 ```
+
 ## Usage
 
 Once the application is running, you can interact with the Candidate Management API via the following routes:
